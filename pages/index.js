@@ -9,7 +9,7 @@ export default function Home() {
   const [Loading, setLoading] = useState(true);
 
   const getweather = async() => {
-    const res = await fetch('http://dataservice.accuweather.com/forecasts/v1/daily/5day/208837?apikey=nHnCDwZLAX2gH7tToPCePGiTSI4FMgs2&metric=true')
+    const res = await fetch('https://dataservice.accuweather.com/forecasts/v1/daily/5day/208837?apikey=nHnCDwZLAX2gH7tToPCePGiTSI4FMgs2&metric=true')
     const posts = await res.json();
     setData(posts.DailyForecasts);
     setLoading(false);
@@ -22,7 +22,13 @@ export default function Home() {
     }
   }, [Loading]);
 
-  if(Loading) return <h1 className='text-5xl text-center'>در حال دریافت دیتا...</h1>
+  if(Loading) return (
+    <div className='flex justify-center items-center bg-blue-400 h-screen'>
+      <h1 className='text-2xl sm:text-5xl text-center'>
+      ...لطفا منتظر باشید
+      </h1>
+    </div>
+  )
 
   return (
     <div className='w-full min-h-screen flex flex-col justify-center items-center bg-blue-400'>
