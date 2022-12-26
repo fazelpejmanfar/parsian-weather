@@ -1,32 +1,29 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState, useEffect, use } from 'react'
 import Weather from '../components/Weather'
 import persiandate from 'persian-date'
+import useSWR from "swr";
+import { InfinitySpin } from 'react-loader-spinner'
 
 export default function Home() {
-  const [Data, setData] = useState([]);
-  const [Loading, setLoading] = useState(true);
 
-  const getweather = async() => {
-    const res = await fetch('https://dataservice.accuweather.com/forecasts/v1/daily/5day/208837?apikey=nHnCDwZLAX2gH7tToPCePGiTSI4FMgs2&metric=true')
-    const posts = await res.json();
-    setData(posts.DailyForecasts);
-    setLoading(false);
-    console.log(posts.DailyForecasts)
-  };
+  const fetcher = (url) => fetch(url).then((res) => res.json());
+  const { data, error } = useSWR(
+    'https://dataservice.accuweather.com/forecasts/v1/daily/5day/208837?apikey=nHnCDwZLAX2gH7tToPCePGiTSI4FMgs2&metric=true',
+    fetcher
+  );
 
-  useEffect(() => {
-    if(Loading) {
-      getweather();
-    }
-  }, [Loading]);
 
-  if(Loading) return (
-    <div className='flex justify-center items-center bg-blue-400 h-screen'>
+
+  if(!data) return (
+    <div className='flex flex-col space-x-5 justify-center items-center bg-blue-400 h-screen'>
       <h1 className='text-2xl sm:text-5xl text-center'>
       ...لطفا منتظر باشید
       </h1>
+      <InfinitySpin 
+  width='200'
+  color="black"
+/>
     </div>
   )
 
@@ -38,14 +35,17 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
+      <div className='flex flex-col justify-center items-center space-y-4'>
         <h1 className='text-xl sm:text-2xl lg:text-5xl tracking-wide text-black font-bold  mt-5'>
           هواشناسی پارسیان
         </h1>
+        <h4 className='text-md sm:text-xl lg:text-2xl tracking-wide text-black font-bold  mt-5'>
+          هواشناسی پارسیان
+        </h4>
       </div>
 
       <div className='flex flex-wrap justify-center items-center sm:gap-5 mb-7 sm:mb-5'>
-      {Data.map((info, index) => {
+      {data.DailyForecasts.map((info, index) => {
         return (
           <Weather key={index} IconDay={info.Day.Icon} IconNight={info.Night.Icon} Date={String(new persiandate(info.EpochDate * 1000).format()).substring(0,11)} Day={new persiandate(info.EpochDate * 1000).format('dddd')} MinDay={info.Temperature.Minimum.Value} MaxDay={info.Temperature.Maximum.Value} 
            RainDay={info.Day.HasPrecipitation} RainNight={info.Night.HasPrecipitation}
