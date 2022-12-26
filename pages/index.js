@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { InfinitySpin } from 'react-loader-spinner'
 
 export default function Home() {
+  const TODAY = new persiandate();
 
   const fetcher = (url) => fetch(url).then((res) => res.json());
   const { data, error } = useSWR(
@@ -14,7 +15,7 @@ export default function Home() {
   );
 
 
-
+console.log(TODAY)
   if(!data) return (
     <div className='flex flex-col space-x-5 justify-center items-center bg-blue-400 h-screen'>
       <h1 className='text-2xl sm:text-5xl text-center'>
@@ -39,8 +40,9 @@ export default function Home() {
         <h1 className='text-xl sm:text-2xl lg:text-5xl tracking-wide text-black font-bold  mt-5'>
           هواشناسی پارسیان
         </h1>
-        <h4 className='text-md sm:text-xl lg:text-2xl tracking-wide text-black font-bold  mt-5'>
-          هواشناسی پارسیان
+        <h4 className='text-md sm:text-xl lg:text-2xl tracking-wide text-gray-800 font-bold text-center'>
+         {new persiandate(data.DailyForecasts[0].EpochDate * 1000).format('dddd')}<br></br>
+         {String(new persiandate(data.DailyForecasts[0].EpochDate * 1000).format()).substring(0,11)}
         </h4>
       </div>
 
